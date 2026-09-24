@@ -121,13 +121,14 @@ func modVrf(typ string, args []string) error {
 	switch typ {
 	case cmdAdd:
 		a, err := extractReserved(args, map[string]int{
-			"rd": paramSingle,
-			"rt": paramList,
-			"id": paramSingle,
+			"rd":    paramSingle,
+			"rt":    paramList,
+			"id":    paramSingle,
+			"label": paramSingle,
 		})
 		if err != nil || len(a[""]) != 1 || len(a["rd"]) != 1 || len(a["rt"]) < 2 {
 			//nolint:staticcheck // cli example
-			return fmt.Errorf("usage: gobgp vrf add <vrf name> [ id <id> ] rd <rd> rt { import | export | both } <rt>...")
+			return fmt.Errorf("usage: gobgp vrf add <vrf name> [ id <id> ] [ label <label> ] rd <rd> rt { import | export | both } <rt>...")
 		}
 		name := a[""][0]
 		var rd bgp.RouteDistinguisherInterface
@@ -157,7 +158,7 @@ func modVrf(typ string, args []string) error {
 				exportRt = append(exportRt, rt)
 			default:
 				//nolint:staticcheck // cli example
-				return fmt.Errorf("usage: gobgp vrf add <vrf name> [ id <id> ] rd <rd> rt { import | export | both } <rt>...")
+				return fmt.Errorf("usage: gobgp vrf add <vrf name> [ id <id> ] [ label <label> ] rd <rd> rt { import | export | both } <rt>...")
 			}
 		}
 		var id uint64
@@ -179,14 +180,24 @@ func modVrf(typ string, args []string) error {
 		if err != nil {
 			return err
 		}
+		var ml uint32
+		var ml64 uint64
+		if len(a["label"]) > 0 {
+			ml64, err = strconv.ParseUint(a["label"][0], 10, 32)
+			if err != nil {
+				return err
+			}
+			ml = uint32(ml64)
+		}
 
 		_, err = client.AddVrf(ctx, &api.AddVrfRequest{
 			Vrf: &api.Vrf{
-				Name:     name,
-				Rd:       v,
-				ImportRt: irt,
-				ExportRt: ert,
-				Id:       uint32(id),
+				Name:      name,
+				Rd:        v,
+				ImportRt:  irt,
+				ExportRt:  ert,
+				Id:        uint32(id),
+				MplsLabel: ml,
 			},
 		})
 		return err

@@ -173,7 +173,7 @@ func (manager *TableManager) GetRFlist() []bgp.Family {
 	return manager.rfList
 }
 
-func (manager *TableManager) AddVrf(name string, id uint32, rd bgp.RouteDistinguisherInterface, importRt, exportRt []bgp.ExtendedCommunityInterface, info *PeerInfo) ([]*Path, error) {
+func (manager *TableManager) AddVrf(name string, id uint32, rd bgp.RouteDistinguisherInterface, importRt, exportRt []bgp.ExtendedCommunityInterface, info *PeerInfo, ml uint32) ([]*Path, error) {
 	manager.mu.Lock()
 	defer manager.mu.Unlock()
 
@@ -192,11 +192,12 @@ func (manager *TableManager) AddVrf(name string, id uint32, rd bgp.RouteDistingu
 		slog.Any("ExportRt", exportRt),
 	)
 	manager.vrfs[name] = &Vrf{
-		Name:     name,
-		Id:       id,
-		Rd:       rd,
-		ImportRt: rtMap,
-		ExportRt: exportRt,
+		Name:      name,
+		Id:        id,
+		Rd:        rd,
+		ImportRt:  rtMap,
+		ExportRt:  exportRt,
+		MplsLabel: ml,
 	}
 	msgs := make([]*Path, 0, len(importRt))
 	nexthop := netip.IPv4Unspecified()
