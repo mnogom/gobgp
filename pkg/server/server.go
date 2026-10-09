@@ -2756,6 +2756,7 @@ func (s *BgpServer) AddVrf(ctx context.Context, r *api.AddVrfRequest) error {
 	return s.mgmtOperation(func() error {
 		name := r.Vrf.Name
 		id := r.Vrf.Id
+		ml := r.Vrf.MplsLabel
 
 		rd, err := apiutil.UnmarshalRD(r.Vrf.Rd)
 		if err != nil {
@@ -2775,7 +2776,7 @@ func (s *BgpServer) AddVrf(ctx context.Context, r *api.AddVrfRequest) error {
 			LocalID: s.bgpConfig.Global.Config.RouterId,
 		}
 
-		if pathList, err := s.globalRib.AddVrf(name, id, rd, im, ex, pi); err != nil {
+		if pathList, err := s.globalRib.AddVrf(name, id, rd, im, ex, pi, ml); err != nil {
 			return err
 		} else if len(pathList) > 0 {
 			s.propagateUpdate(nil, pathList)
@@ -2806,7 +2807,7 @@ func (s *BgpServer) DeleteVrf(ctx context.Context, r *api.DeleteVrfRequest) erro
 		}
 
 		if vrf, ok := s.globalRib.GetVrf(name); ok {
-			if vrf.MplsLabel > 0 {
+			if vrf.MplsLabel > 0 && s.zclient != nil {
 				s.zclient.releaseMplsLabel(vrf.MplsLabel)
 			}
 		}

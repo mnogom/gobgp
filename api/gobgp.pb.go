@@ -11840,6 +11840,7 @@ type Vrf struct {
 	ImportRt      []*RouteTarget         `protobuf:"bytes,3,rep,name=import_rt,json=importRt,proto3" json:"import_rt,omitempty"`
 	ExportRt      []*RouteTarget         `protobuf:"bytes,4,rep,name=export_rt,json=exportRt,proto3" json:"export_rt,omitempty"`
 	Id            uint32                 `protobuf:"varint,5,opt,name=id,proto3" json:"id,omitempty"`
+	MplsLabel     uint32                 `protobuf:"varint,6,opt,name=mpls_label,json=mplsLabel,proto3" json:"mpls_label,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11905,6 +11906,13 @@ func (x *Vrf) GetExportRt() []*RouteTarget {
 func (x *Vrf) GetId() uint32 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *Vrf) GetMplsLabel() uint32 {
+	if x != nil {
+		return x.MplsLabel
 	}
 	return 0
 }
@@ -14561,13 +14569,15 @@ const file_api_gobgp_proto_rawDesc = "" +
 	"\tprefixlen\x18\x02 \x01(\rR\tprefixlen\x12\x16\n" +
 	"\x06maxlen\x18\x03 \x01(\rR\x06maxlen\x12\x16\n" +
 	"\x06prefix\x18\x04 \x01(\tR\x06prefix\x12!\n" +
-	"\x04conf\x18\x05 \x01(\v2\r.api.RPKIConfR\x04conf\"\xb0\x01\n" +
+	"\x04conf\x18\x05 \x01(\v2\r.api.RPKIConfR\x04conf\"\xcf\x01\n" +
 	"\x03Vrf\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12'\n" +
 	"\x02rd\x18\x02 \x01(\v2\x17.api.RouteDistinguisherR\x02rd\x12-\n" +
 	"\timport_rt\x18\x03 \x03(\v2\x10.api.RouteTargetR\bimportRt\x12-\n" +
 	"\texport_rt\x18\x04 \x03(\v2\x10.api.RouteTargetR\bexportRt\x12\x0e\n" +
-	"\x02id\x18\x05 \x01(\rR\x02id\"\x86\x01\n" +
+	"\x02id\x18\x05 \x01(\rR\x02id\x12\x1d\n" +
+	"\n" +
+	"mpls_label\x18\x06 \x01(\rR\tmplsLabel\"\x86\x01\n" +
 	"\x14DefaultRouteDistance\x126\n" +
 	"\x17external_route_distance\x18\x01 \x01(\rR\x15externalRouteDistance\x126\n" +
 	"\x17internal_route_distance\x18\x02 \x01(\rR\x15internalRouteDistance\"\x99\x04\n" +
