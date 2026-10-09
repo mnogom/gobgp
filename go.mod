@@ -1,4 +1,4 @@
-module github.com/osrg/gobgp/v4
+module github.com/mnogom/gobgp/v4
 
 go 1.25.0
 
